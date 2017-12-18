@@ -10,7 +10,7 @@ setup(
     url="https://github.com/khazhyk/osuapi",
     license="MIT",
     keywords="osu",
-    requirements=requirements,
+    install_requires=[requirements],
     packages=find_packages(),
     description="osu! api wrapper.",
     classifiers=[

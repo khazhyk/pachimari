@@ -14,6 +14,13 @@ from enum import Enum
 from collections import namedtuple
 
 
+__title__ = "pachimari"
+__author__ = "khazhyk"
+__license__ = "MIT"
+__copyright__ = "Copyright khazhyk"
+__version__ = "0.0.0"
+
+
 # if psn or xbl, region is "global"
 class Platform(Enum):
     pc = "pc"

@@ -1,4 +1,11 @@
 # pytest
 .cache/
 
+# python
 __pycache__
+
+# setuputils
+build/
+dist/
+*.egg-info/
+

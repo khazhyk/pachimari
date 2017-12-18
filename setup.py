@@ -1,13 +1,12 @@
 from setuptools import setup, find_packages
-from pachimari import __version__ as version, __title__ as name, __author__ as author, __license__ as license
 
 with open('requirements.txt') as f:
   requirements = f.read().splitlines()
 
 setup(
-    name=name,
-    version=version,
-    author=author,
+    name="pachimari",
+    version="0.0.0",
+    author="khazhyk",
     url="https://github.com/khazhyk/osuapi",
     license="MIT",
     keywords="osu",

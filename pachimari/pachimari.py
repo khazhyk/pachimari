@@ -124,7 +124,10 @@ class OverwatchProfile(Map):
         o = OverwatchProfile()
         o.tag = battletag
         o.parse_acct_info(soup)
-        o.parse_stats(soup)
+        o.private = "THIS PROFILE IS PRIVATE" in content
+
+        if not o.private:
+            o.parse_stats(soup)
 
         return o
 

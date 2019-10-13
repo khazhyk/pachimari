@@ -135,39 +135,34 @@ class OverwatchProfile(Map):
         self.portrait_url = elem.find(lambda x: x.has_attr(
             'class') and 'player-portrait' in x['class'])['src']
 
-        lvl_rnk = filter(lambda x: bool(x.name), elem.find(lambda x: x.has_attr(
-            'class') and 'masthead-player-progression' in x['class']).children)
-        level = next(lvl_rnk)
+        lvl_rnk = elem.find(attrs={'class': 'masthead-player-progression'})
+        level = lvl_rnk.find(attrs={'class': 'player-level'})
         self.level = int(level.div.string.strip())
 
-        try:
-            rank = next(lvl_rnk)
-        except StopIteration:
-            pass
-        else:
-            self.rank = int(rank.div.string.strip())
+        rank = lvl_rnk.find(attrs={'class': 'competitive-rank-level'})
+
+        if rank:
+            self.rank = int(rank.string.strip())
 
     def parse_stats(self, soup):
-        quick_play = soup.find(lambda x: x.has_attr(
-            'id') and x['id'] == 'quickplay')
+        quick_play = soup.find(attrs={'id': 'quickplay'})
 
-        if not quick_play.find(lambda x: x.has_attr("class") and 'highlights-section' in x['class']).h6:
+        if quick_play:
             self['quick_play'] = self.parse_stats_section(quick_play)
 
-        competitive_play = soup.find(lambda x: x.has_attr('id') and x[
-                                     'id'] == "competitive")
+        competitive_play = soup.find(attrs={'id': 'competitive'})
 
-        if not competitive_play.find(lambda x: x.has_attr("class") and 'highlights-section' in x['class']).h6:
+        if competitive_play:
             self['competitive_play'] = self.parse_stats_section(
                 competitive_play)
 
-        achievements = soup.find(lambda x: x.has_attr('id') and x[
-                                 'id'] == 'achievements-section')
+        achievements = soup.find(attrs={'id': 'achievements-section'})
 
         self['achievements'] = self.parse_achievements(achievements)
 
     def parse_stats_section(self, elem):
-        return self.parse_career_section(elem.find(lambda x: x.has_attr('class') and 'career-stats-section' in x['class']))
+        # There's two career-sections, the first one is the summary
+        return self.parse_career_section(elem.findAll(attrs={'class': 'career-section'})[1])
 
     def parse_career_section(self, elem):
         children = filter(lambda x: bool(x.name), elem.div.children)
@@ -240,27 +235,23 @@ class OverwatchProfile(Map):
         return val
 
     def parse_achievements(self, elem):
-        children = filter(lambda x: bool(x.name), elem.div.children)
+        children = filter(lambda x: x.name == "div", elem.div.children)
         options_section = next(children)
 
         headers = (option.string.strip().lower().replace(" ", "_")
                    for option in options_section.findAll("option"))
-        achievements_elem = next(children)
-
         achievements = Map()
 
-        for achievement_section in filter(lambda x: x.name, achievements_elem.children):
+        for achievement_section in children:
             section = next(headers)
             for achievement_elem in filter(lambda x: x.name, achievement_section.ul.children):
-                achieved = 'm-disabled' not in achievement_elem.find(
-                    lambda x: x.name == 'div' and x.has_attr('class') and 'achievement-card' in x['class'])['class']
+                achieved = 'm-disabled' not in achievement_elem.find(attrs={'class', 'achievement-card'})['class']
                 name = achievement_elem.h6.string.strip()
                 description = achievement_elem.p.string.strip()
                 url = achievement_elem.img['src']
 
                 achievements[name.lower().replace(" ", "_")] = Achievement(
                     name, description, achieved, url, section)
-
         return achievements
 
 

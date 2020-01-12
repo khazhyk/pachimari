@@ -7,7 +7,7 @@ import pachimari
 class ParseTest(unittest.TestCase):
 
     def test_data_live(self):
-        bt = pachimari.BattleTag('pc', 'us', 'fischer', '2188')
+        bt = pachimari.BattleTag('pc', 'us', 'iCy', '1177')
 
         with requests.get(bt.profile_url) as resp:
             prof = pachimari.OverwatchProfile.from_html(
